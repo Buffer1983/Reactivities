@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Application.Core;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-
-
-//Created in order not to repeat basic declaration for api controllers
 
 namespace API.Controllers
 {
@@ -17,7 +10,20 @@ namespace API.Controllers
     {
         private IMediator _mediator;
 
-        protected IMediator Mediator => _mediator ??= HttpContext.RequestServices
-            .GetService<IMediator>();
+        protected IMediator Mediator => _mediator ??= 
+            HttpContext.RequestServices.GetService<IMediator>();
+
+        protected ActionResult HandleResult<T>(Result<T> result)
+        {
+            if (result == null) return NotFound();
+
+            if (result.IsSuccess && result.Value != null)
+                return Ok(result.Value);
+
+            if (result.IsSuccess && result.Value == null)
+                return NotFound();
+
+            return BadRequest(result.Error);
+        }
     }
 }
