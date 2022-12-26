@@ -10,19 +10,15 @@ namespace API.Extensions
     public static class IdentityServiceExtensions
     {
         public static IServiceCollection AddIdentityServices(this IServiceCollection services,
-         IConfiguration config){
-            services.AddIdentityCore<AppUser>(opt=>
+            IConfiguration config)
+        {
+            services.AddIdentityCore<AppUser>(opt =>
             {
-                //To Be Added In our project
-                opt.Password.RequireDigit = true;
-                opt.Password.RequiredLength = 8;
-                opt.Password.RequireUppercase = true;
-                opt.Password.RequireLowercase = true;
-                opt.Password.RequireNonAlphanumeric =true;
+                opt.Password.RequireNonAlphanumeric = false;
                 opt.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<DataContext>();
-
+            
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
